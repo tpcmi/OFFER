@@ -156,7 +156,55 @@ new会调用构造函数，不用指定内存大小，返回的指针不用强�
 
 ### 多重继承
 
-会导致子类中有多个来自不同父类且重复的参数，因此需要使用虚基类，虚基类构造函数优先程度最高
+会导致子类中有多个来自不同父类且重复的参数，因此需要使用虚基类，虚基类构造函数优先程度最高 
+
+### 虚继承
+
+由于多重继承后，派生类访问基类元素是不知道是从哪个父类去获得，会报错，必须注明是哪个父类的基类，如下所示菱形继承：
+
+![](https://tva1.sinaimg.cn/large/007S8ZIlgy1gjce2lzjnvj30ap0anaaf.jpg)
+
+```c++
+class A{
+    public:
+        int a;
+};
+class B:public A{
+    public:
+        int b;
+};
+class C:public A{
+    public:
+        int c;
+};
+class D:public B,public C{
+    public:
+        int d;
+};
+
+int
+main()
+{
+    D d;
+    cout << &d.B::a << endl;	//0x7ffee508b758
+    cout << &d.C::a << endl;	//0x7ffee508b760
+    return 0;	
+}
+```
+
+
+
+但是在子类中就会复制有两个基类，改进的方法是在中间父类继承基类时，加上virtual关键字即可,且可以直接访问
+
+```c++
+class B:virtual public A
+class C:virtual public A
+
+cout << &d.B::a << endl;	//0x7ffee508b760
+cout << &d.C::a << endl;	//0x7ffee508b760
+```
+
+
 
 ## 多态
 
