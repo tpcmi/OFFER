@@ -108,6 +108,75 @@
 - 可剥夺资源
 - 资源有序分配法
 
+### 生产者消费者
+
+由两类线程组成
+
+![preview](https://pic2.zhimg.com/v2-2eaa9482f08f4de702fcb456bd83bbf1_r.jpg)
+
+该模型实现了生产者和消费者之间的**解藕**和**异步**，还要**平衡速度差异**
+
+```c++
+template<typename T>
+class Factory{
+private:
+    queue<T> _factory;
+    int _size = 5;
+    bool logEnable = false;
+public:
+    void produce(T item);
+    T consume();
+    void clear();
+    void configure(int cap, bool log = false);
+};
+
+template<typename T>
+void Factory<T>::produce(T item){
+    if(this->_size>this->_factory.size()){
+        this->_factory.push(item);
+        if(logEnable)
+            cout << "Produce product: " << item<<endl;
+        return;
+    }
+    if(logEnable)
+        cout << "Consume product" << this->consume() << endl;
+    this->_factory.push(item);
+    if(logEnable)
+        cout << "Produce product: " << item << endl;
+}
+
+template<typename T>
+T Factory<T>::consume(){
+    T item = this->_factory.front();
+    this->_factory.pop();
+    return item;
+}
+
+template<typename T>
+void Factory<T>::clear(){
+    for (int i = 0; i < this->_factory.size();i++){
+        if(logEnable)
+            cout << "Consume product" << this->consume() << endl;
+    }
+}
+
+template<typename T>
+void Factory<T>::configure(int cap,bool log){
+    this->_size = cap;
+    this->logEnable = log;
+}
+
+int main(){
+    Factory<int> factory;
+    factory.configure(5, true);
+    for (int i = 0; i < 10;i++)
+        factory.produce(i);
+    
+    factory.consume();
+    return 0;
+}
+```
+
 
 
 ## Linux 物理内存
